@@ -10,11 +10,33 @@ const port=3000;
 app.use(express.json());
 
 app.get('/',async(req,res)=>{
-    const Notes=await Models.Notes.findAll();
+    const AdminUser=await Models.admin_users.findAll({ include: [{
+        model:Models.admin_roles
+    }]});
 
     
-    res.send(Notes);
+    res.send(AdminUser);
 });
+
+app.get('/roles',async(req,res)=>{
+    const roles=await Models.admin_roles.findAll({
+        include:[{
+            model:Models.admin_roles_policies
+        }]
+    })
+
+    res.send(roles);
+
+
+});
+
+app.get('/role/:id',async(req,res)=>{
+    const User=await Models.admin_users.findOne({
+        where:{role_id:req.params.id}
+    })
+
+    res.send(User);
+})
 
 app.post('/',(req,res)=>{
     console.log(req.body);
